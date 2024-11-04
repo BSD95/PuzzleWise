@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Quiz Difficulty</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="text-center">Puzzle Wise</h2>
+        <form id="difficulty-form">
+            <div class="form-group">
+                <label for="difficulty">Choose Difficulty:</label>
+                <select class="form-control" name="difficulty" id="difficulty" required>
+                    <option value="" disabled selected>Select difficulty</option>
+                    <option value="easy">Easy</option>
+                    <option value="moderate">Moderate</option>
+                    <option value="hard">Hard</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-success btn-block">Start Quiz</button>
+        </form>
+        
+        <div class="text-center mt-4">
+            <a href="#" class="btn btn-primary" onclick="playHangman()">Play Hangman</a>
+        </div>
+        <div class="text-center mt-4">
+            <a href="#" class="btn btn-info" onclick="startEscapeRoom()">Start Escape Room</a>
+        </div>
+    </div>
+
+    <script>
+        function setDifficulty() {
+            const difficulty = document.getElementById('difficulty').value;
+            if (difficulty) {
+                localStorage.setItem('difficulty', difficulty);
+            } else {
+                alert('Please select a difficulty level first.'); // Alert if no difficulty is selected
+            }
+        }
+
+        function playHangman() {
+            setDifficulty(); // Store difficulty for the quiz too
+            const difficulty = document.getElementById('difficulty').value;
+            if (difficulty) {
+                window.location.href = 'hangman.html';
+            } else {
+                alert('Please select a difficulty level first.'); // Alert if no difficulty is selected
+            }
+        }
+
+        function startEscapeRoom() {
+            setDifficulty(); // Store difficulty for the quiz too
+            const difficulty = document.getElementById('difficulty').value;
+            if (difficulty) {
+                window.location.href = 'escape_room.html';
+            } else {
+                alert('Please select a difficulty level first.'); // Alert if no difficulty is selected
+            }
+        }
+
+        document.getElementById('difficulty-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            setDifficulty();  // Store difficulty for the quiz
+            window.location.href = 'quiz.html';
+        });
+    </script>
+</body>
+</html>

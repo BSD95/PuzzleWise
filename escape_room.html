@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escape Room Puzzle</title>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="styles.css">
+
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="text-center">Escape Room Puzzle</h2>
+        <div id="room-description" class="mt-4"></div>
+        <div id="choices" style="display:none;">
+            <button class="choice btn btn-outline-primary" id="choice1"></button><hr>
+            <button class="choice btn btn-outline-primary" id="choice2"></button><hr>
+            <button class="choice btn btn-outline-primary" id="choice3"></button>
+        </div>
+        <div id="message" class="mt-3"></div>
+        <button id="next-room" class="btn btn-success small-btn" style="display:none;">Next Room</button><hr>
+        <a href="index.html" class="btn btn-primary small-btn btn-block">Back to Selection</a>
+    </div>
+
+    <script>
+        // Retrieve selected difficulty from local storage
+        const difficulty = localStorage.getItem('difficulty');
+
+        const puzzles = {
+            easy: [
+                {
+                    description: " You found your self stuck in a forest, what do you do first?",
+                    choices: ["Find a River", "Search for Food", "Stay where you are"],
+                    answer: "find a River",
+                },
+                {
+                    description: " As you follow the river, you find yourself hungry, what do you do?",
+                    choices: ["Eat some berries you saw in the bushes", "Get some honey in a beehive", "Eat fruits that you are familiar with"],
+                    answer: "Eat fruits that you are familiar with",
+                },
+                {
+                    description: "What has keys but can't open locks?",
+                    choices: ["Piano", "Map", "Calculator"],
+                    answer: "piano",
+                }
+            ],
+            moderate: [
+                {
+                    description: "In the heart of the forest, I hide and wait, with numbers and letters, I hold your fate. What am I?",
+                    choices: ["Map", "Compass", "Clock"],
+                    answer: "compass",
+                },
+                {
+                    description: "I am something you can see but not touch or feel. I help you see clearly, revealing what’s real. What am I?",
+                    choices: ["Flashlight", "Telescope", "Lantern"],
+                    answer: "telescope",
+                },
+                {
+                    description: "I am a small treasure found in the ground, turned into a piece of art that’s often renowned. What am I?",
+                    choices: ["Gemstone", "Gold Coin", "Ring"],
+                    answer: "gemstone",
+                }
+            ],
+            hard: [
+                {
+                    description: "I can fly without wings. I can cry without eyes. Whenever I go, darkness flies. What am I?",
+                    choices: ["Cloud", "Time", "Dream"],
+                    answer: "cloud",
+                },
+                {
+                    description: "I have cities, but no houses. I have mountains, but no trees. I have water, but no fish. What am I?",
+                    choices: ["Map", "Desert", "Ocean"],
+                    answer: "map",
+                },
+                {
+                    description: "The more you take, the more you leave behind. What am I?",
+                    choices: ["Footsteps", "Time", "Knowledge"],
+                    answer: "footsteps",
+                }
+            ]
+        };
+
+        let currentRoomIndex = 0;
+
+        function startGame() {
+            showRoom(currentRoomIndex);
+        }
+
+        function showRoom(index) {
+            if (index < puzzles[difficulty].length) {
+                const room = puzzles[difficulty][index];
+                document.getElementById("room-description").textContent = room.description;
+                document.getElementById("choices").style.display = "block";
+                document.getElementById("message").textContent = "";
+                document.getElementById("next-room").style.display = "none";
+
+                // Set the choices
+                const choiceButtons = document.querySelectorAll(".choice");
+                choiceButtons.forEach((button, i) => {
+                    button.textContent = room.choices[i];
+                    button.onclick = () => checkAnswer(room.choices[i]);
+                });
+            } else {
+                document.getElementById("room-description").textContent = "Congratulations! You've escaped the room!";
+                document.getElementById("choices").style.display = "none";
+                document.getElementById("next-room").style.display = "none";
+            }
+        }
+
+        function checkAnswer(selectedAnswer) {
+            const correctAnswer = puzzles[difficulty][currentRoomIndex].answer;
+            if (selectedAnswer.toLowerCase() === correctAnswer) {
+                document.getElementById("message").textContent = "Correct! You can proceed to the next room.";
+                document.getElementById("next-room").style.display = "inline";
+            } else {
+                document.getElementById("message").textContent = "Incorrect. Try again.";
+            }
+        }
+
+        document.getElementById("next-room").addEventListener("click", () => {
+            currentRoomIndex++;
+            showRoom(currentRoomIndex);
+        });
+
+        startGame();
+    </script>
+</body>
+</html>

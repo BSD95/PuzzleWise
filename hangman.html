@@ -1,0 +1,131 @@
+<!-- hangman.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hangman Game with Hints</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center">Hangman Game</h1>
+        <p class="text-center">Try to guess the word before the man is hanged!</p>
+        
+        <div id="hangman-container" class="text-center">
+            <h3 id="wordDisplay">_ _ _ _ _</h3>
+            <p id="hintDisplay"><strong>Hint:</strong> <span id="hint"></span></p>
+            <p id="message"></p>
+            <input type="text" id="letterInput" maxlength="1" class="form-control mt-3" placeholder="Type a letter and press Enter" autofocus>
+            <button id="reset" class="btn btn-primary mt-3">Restart Game</button> <hr>
+            <a href="index.html" class="btn btn-primary btn-block">Back to Selection</a>
+        </div>
+    </div>
+
+    <script>
+        // Words categorized by difficulty
+        const words = {
+            easy: [
+                { word: 'atom', hint: 'The basic unit of a chemical element.' },
+                { word: 'gravity', hint: 'The force that pulls objects toward each other, especially toward the center of the earth.' },
+                { word: 'virus', hint: 'A tiny infectious agent that replicates only inside the cells of living organisms.' },
+            
+            ],
+            moderate: [
+                { word: 'photosynthesis', hint: 'A process within plants' },
+                { word: 'neuron', hint: 'A type of cell in the body' },
+                { word: 'algorithm', hint: 'A set of rules in computing' }
+            ],
+            hard: [
+                { word: 'Physics', hint: 'A branch of science that involves motion' },
+                { word: 'Science', hint: 'Explanation to events or phenomenons in the world' },
+                { word: 'Mathematics', hint: 'Study of numbers, shapes, patterns, and relationships.' },
+            ]
+        };
+
+        let selectedWord = '';
+        let hint = '';
+        let displayWord = [];
+        let attempts;
+        let guessedLetters = [];
+
+        const wordDisplay = document.getElementById('wordDisplay');
+        const hintDisplay = document.getElementById('hint');
+        const messageDisplay = document.getElementById('message');
+        const letterInput = document.getElementById('letterInput');
+        const resetButton = document.getElementById('reset');
+
+        // Retrieve difficulty from localStorage
+        const difficulty = localStorage.getItem('difficulty') || 'easy';
+
+        // Initialize Game
+        function initGame() {
+            const wordOptions = words[difficulty];
+            const randomIndex = Math.floor(Math.random() * wordOptions.length);
+            selectedWord = wordOptions[randomIndex].word;
+            hint = wordOptions[randomIndex].hint;
+
+            displayWord = Array(selectedWord.length).fill('_');
+            
+            // Set attempts based on difficulty
+            attempts = difficulty === 'easy' ? 7 : difficulty === 'moderate' ? 5 : 3;
+            guessedLetters = [];
+            
+            wordDisplay.innerText = displayWord.join(' ');
+            hintDisplay.innerText = hint;
+            messageDisplay.innerText = `You have ${attempts} attempts remaining.`;
+            letterInput.value = '';
+            letterInput.focus();
+        }
+
+        // Handle a letter guess
+        function handleGuess(letter) {
+            if (guessedLetters.includes(letter) || attempts <= 0 || letter.length !== 1) return;
+
+            guessedLetters.push(letter);
+
+            if (selectedWord.includes(letter)) {
+                for (let i = 0; i < selectedWord.length; i++) {
+                    if (selectedWord[i] === letter) displayWord[i] = letter;
+                }
+                wordDisplay.innerText = displayWord.join(' ');
+                
+                if (!displayWord.includes('_')) {
+                    messageDisplay.innerText = 'Congratulations! You guessed the word!';
+                    disableInput();
+                }
+            } else {
+                attempts--;
+                messageDisplay.innerText = `Incorrect! You have ${attempts} attempts remaining.`;
+                if (attempts <= 0) {
+                    messageDisplay.innerText = `Game over! The word was "${selectedWord}".`;
+                    disableInput();
+                }
+            }
+        }
+
+        // Disable the input field
+        function disableInput() {
+            letterInput.disabled = true;
+        }
+
+        // Reset game
+        resetButton.addEventListener('click', () => {
+            letterInput.disabled = false;
+            initGame();
+        });
+
+        // Event listener for letter input
+        letterInput.addEventListener('keypress', (event) => {
+            if (event.key === 'Enter') {
+                handleGuess(letterInput.value.toLowerCase());
+                letterInput.value = '';
+            }
+        });
+
+        // Start the game
+        initGame();
+    </script>
+</body>
+</html>
